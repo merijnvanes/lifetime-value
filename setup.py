@@ -5,6 +5,7 @@ with open("README.md", "r") as fh:
 
 REQUIRED_PACKAGES = [
     'pandas>=1.2.2',
+    'numpy>=1.20.2'
 ]
 
 REQUIRED_PACKAGES_SETUP = [
