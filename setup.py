@@ -18,7 +18,7 @@ setup(
     description='Lifetime value function over time.',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    version='0.0.1',
+    version='0.0.3',
     url='https://github.com/merijnvanes/lifetime-value.git',
     author='Merijn van Es',
     author_email='merijnvanes@gmail.com',
