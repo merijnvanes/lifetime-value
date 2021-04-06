@@ -1,8 +1,9 @@
 """Example for getting a lifetime value dataframe.
 
-Created: 2021-04-05 (Merijn)
+Created: 2021-04-06 (Merijn)
 Updated:
 """
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Import libraries
@@ -13,7 +14,7 @@ import pandas as pd
 # ----------------------------------------------------------------------------------------------------------------------
 # Import internal modules
 # ----------------------------------------------------------------------------------------------------------------------
-from lifetime_value import lifetime_value as ltv
+import lifetime_value as ltv
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -31,3 +32,6 @@ df_events = pd.DataFrame({
 })
 
 print(ltv.lifetime_value(df_subjects, df_events))
+
+
+print(ltv.lifetime_value(df_subjects, df_events, confidence_level=0.9))
