@@ -34,4 +34,4 @@ df_events = pd.DataFrame({
 print(ltv.lifetime_value(df_subjects, df_events))
 
 
-print(ltv.lifetime_value(df_subjects, df_events, confidence_level=0.9))
+print(ltv.lifetime_value(df_subjects, df_events, confidence_level=0.8))

@@ -1,9 +1,9 @@
 """Lifetime Value (LTV) function.
-Versatile function that measures a cumalative average value of events through time. Loosely based on the Kaplan-Meier
-estimator.
+Function that measures a cumalative average value through time for a population derived from events. Loosely based on
+the Kaplan-Meier estimator.
 
 Created: 2021-03-30 (Merijn)
-Updated: 2021-04-05 (Merijn)
+Updated: 2021-04-06 (Merijn)
 """
 
 
@@ -22,7 +22,9 @@ def lifetime_value(subjects: pd.DataFrame, events: pd.DataFrame, confidence_leve
     """Calculate the average lifetime value (LTV) of a group of subjects through time. The actual estimated lifetime
     value would be the value if time goes to infinity.
 
-    :param subjects: pd.DataFrame, holds information on the subject.
+    :param subjects: pd.DataFrame, every subject should have exactly one row with the columns`subject_id` and
+    `lifetime`. Where `lifetime` represents the time the subject is under study from start of its tracking until now or
+    a prior known end date of the tracking (examples: end of subscription, death).
     :param events: pd.DataFrame, all events with times and values.
     :param confidence_level: float in (0,1), the confidence level for the bootstrapped confidence interval for the mean.
     :return: pd.DataFrame, with columns `time` and `value`, and optionally a confidence interval.
@@ -41,7 +43,11 @@ def lifetime_value(subjects: pd.DataFrame, events: pd.DataFrame, confidence_leve
         subjects.loc[:, col] = subjects[col].astype(columns[col])  # Correct format.
     if not subjects.subject_id.is_unique:
         raise ValueError(
-            f'The column `{list(columns.keys())[0]}` in DataFrame `subjects` must only contain unique values.'
+            'The column `subject_id` in DataFrame `subjects` must only contain unique values.'
+        )
+    if min(subjects.lifetime) < 0:
+        raise ValueError(
+            'The values in column `lifetime` in DataFrame `subjects` must be greater or equal to 0.'
         )
 
     # Check if the `events` dafaframe is well-defined
@@ -57,6 +63,10 @@ def lifetime_value(subjects: pd.DataFrame, events: pd.DataFrame, confidence_leve
         if col not in input_columns:
             raise ValueError(f'DataFrame `events` must contain the column `{col}.')
         events.loc[:, col] = events[col].astype(columns[col])
+    if min(events.time) < 0:
+        raise ValueError(
+            'The values in column `time` in DataFrame `events` must be greater or equal to 0.'
+        )
 
     # Check if the `confidence_level` is well-defined.
     if confidence_level:
