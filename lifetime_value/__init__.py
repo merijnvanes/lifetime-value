@@ -3,7 +3,7 @@ Function that measures a cumalative average value through time for a population 
 the Kaplan-Meier estimator.
 
 Created: 2021-03-30 (Merijn)
-Updated: 2021-04-06 (Merijn)
+Updated: 2021-04-09 (Merijn)
 """
 
 
@@ -13,6 +13,26 @@ Updated: 2021-04-06 (Merijn)
 import itertools
 import pandas as pd
 import numpy as np
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Helper functions
+# ----------------------------------------------------------------------------------------------------------------------
+def _accept_dataframe(name: str, df: pd.DataFrame, col_specs: dict) -> pd.DataFrame:
+    """Check if the necessary columns are present in the input dataframe and correct the data type.
+
+    :param name: str, original name of the dataframe `df`.
+    :param df: pd.DataFrame, input dataframe.
+    :param col_specs: dict[str, type], column specifications with column name and corresponding data type.
+    :return: pd.DataFrame, the dataframe in the desired format.
+    """
+    df2 = df.copy()
+    for col in col_specs.keys():
+        if col not in df2.columns:
+            raise ValueError(f'DataFrame `{name}` must contain the column `{col}.')
+        df2.loc[:, col] = df2[col].astype(col_specs[col])  # Correct format.
+    df2 = df2[col_specs.keys()]  # Remove irrelevant columns.
+    return df2
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -30,17 +50,11 @@ def lifetime_value(subjects: pd.DataFrame, events: pd.DataFrame, confidence_leve
     :return: pd.DataFrame, with columns `time` and `value`, and optionally a confidence interval.
     """
     # Check if the `subjects` dataframe is well-defined.
-    subjects = subjects.copy()
     columns = {
         'subject_id': str,
         'lifetime': int
     }
-    subjects = subjects[columns.keys()]  # Remove irrelevant columns.
-    input_columns = subjects.columns
-    for col in columns.keys():
-        if col not in input_columns:
-            raise ValueError(f'DataFrame `subjects` must contain the column `{col}.')
-        subjects.loc[:, col] = subjects[col].astype(columns[col])  # Correct format.
+    subjects = _accept_dataframe('subjects', subjects, columns)
     if not subjects.subject_id.is_unique:
         raise ValueError(
             'The column `subject_id` in DataFrame `subjects` must only contain unique values.'
@@ -51,18 +65,12 @@ def lifetime_value(subjects: pd.DataFrame, events: pd.DataFrame, confidence_leve
         )
 
     # Check if the `events` dafaframe is well-defined
-    events = events.copy()
     columns = {
         'subject_id': str,
         'time': int,
         'value': float,
     }
-    events = events[columns.keys()]  # Remove irrelevant columns.
-    input_columns = events.columns
-    for col in columns.keys():
-        if col not in input_columns:
-            raise ValueError(f'DataFrame `events` must contain the column `{col}.')
-        events.loc[:, col] = events[col].astype(columns[col])
+    events = _accept_dataframe('events', events, columns)
     if min(events.time) < 0:
         raise ValueError(
             'The values in column `time` in DataFrame `events` must be greater or equal to 0.'
