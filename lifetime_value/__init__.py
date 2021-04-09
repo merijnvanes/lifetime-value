@@ -50,11 +50,11 @@ def lifetime_value(subjects: pd.DataFrame, events: pd.DataFrame, confidence_leve
     :return: pd.DataFrame, with columns `time` and `value`, and optionally a confidence interval.
     """
     # Check if the `subjects` dataframe is well-defined.
-    columns = {
+    column_specs = {
         'subject_id': str,
         'lifetime': int
     }
-    subjects = _accept_dataframe('subjects', subjects, columns)
+    subjects = _accept_dataframe('subjects', subjects, column_specs)
     if not subjects.subject_id.is_unique:
         raise ValueError(
             'The column `subject_id` in DataFrame `subjects` must only contain unique values.'
@@ -65,12 +65,12 @@ def lifetime_value(subjects: pd.DataFrame, events: pd.DataFrame, confidence_leve
         )
 
     # Check if the `events` dafaframe is well-defined
-    columns = {
+    column_specs = {
         'subject_id': str,
         'time': int,
         'value': float,
     }
-    events = _accept_dataframe('events', events, columns)
+    events = _accept_dataframe('events', events, column_specs)
     if min(events.time) < 0:
         raise ValueError(
             'The values in column `time` in DataFrame `events` must be greater or equal to 0.'
