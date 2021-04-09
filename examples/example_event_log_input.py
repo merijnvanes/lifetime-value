@@ -91,7 +91,7 @@ for i in range(N_USERS):
             )
 print(event_log)
 
-# Convert event log data to correct input for the 'ltv.lifetime_value()' function .
+# Transform event log data to correct input for the 'ltv.lifetime_value()' function.
 # Subjects input dataframe.
 df_subjects = event_log.loc[event_log.type == 'registration']
 df_subjects = df_subjects.rename({'user_id': 'subject_id', 'date': 'registration_date'}, axis='columns')
