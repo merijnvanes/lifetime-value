@@ -31,6 +31,6 @@ df_events = pd.DataFrame({
     'value': [12.3, 0.5, 1.5, 3.3, 34.3, 1.2]
 })
 
-df_result = ltv.lifetime_value(df_subjects, df_events, confidence_level=0.8)
+df_result = ltv.from_subjects_and_events_dataframe(df_subjects, df_events, confidence_level=0.8)
 print(df_result)
 
