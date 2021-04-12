@@ -16,32 +16,32 @@ pip install lifetime-value
 
 The following example code:
 ```python
+import datetime
 import pandas as pd
 import lifetime_value as ltv
 
-df_subjects = pd.DataFrame({
-    'subject_id': ['a', 'b', 'c'],
-    'lifetime': [6, 6, 4],
+event_log_df = pd.DataFrame({
+    'subject_id': ['user_a', 'user_a', 'user_a', 'user_b', 'user_b', 'user_a'],
+    'date': ['2021-01-04', '2021-01-04', '2021-01-10', '2021-01-05', '2021-01-07', '2021-01-07'],
+    'type': ['registration', 'conversion', 'conversion', 'registration', 'conversion', 'conversion'],
+    'value': [0, 10, 5, 0, 7, 1],
 })
+event_log_df['date'] = [datetime.datetime.strptime(item, "%Y-%m-%d").date() for item in event_log_df.date]
 
-df_events = pd.DataFrame({
-    'subject_id': ['a', 'a', 'b', 'c', 'c', 'a'],
-    'time': [3, 1, 5, 1, 4, 3],
-    'value': [12.3, 0.5, 1.5, 3.3, 34.3, 1.2]
-})
-
-df_result = ltv.from_subjects_and_events_dataframe(df_subjects, df_events, confidence_level=0.8)
+df_result = ltv.from_event_log(event_log_df, confidence_level=0.8)
 print(df_result)
 ```
 
 Will return: 
 ```commandline
-   time      value  confidence_interval_left_bound  confidence_interval_right_bound
-0     0   0.000000                        0.000000                         0.000000
-1     1   1.266667                        0.166667                         2.366667
-2     2   1.266667                        0.166667                         2.366667
-3     3   5.766667                        1.100000                        10.433333
-4     4  17.200000                        4.666667                        29.733333
+   time  value  confidence_interval_left_bound  confidence_interval_right_bound
+0     0    5.0                             0.0                             10.0
+1     1    5.0                             0.0                             10.0
+2     2    8.5                             7.0                             10.0
+3     3    9.0                             7.0                             11.0
+4     4    9.0                             7.0                             11.0
+5     5    9.0                             7.0                             11.0
+
 ```
 Note that the results of the confidence intervals could vary, because they
 are estimated with a probabilistic resampling technique.

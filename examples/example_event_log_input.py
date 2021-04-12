@@ -89,35 +89,19 @@ for i in range(N_USERS):
                 ),
                     ignore_index=True
             )
-# print(event_log)
-#
-# # Transform event log data to correct input for the 'ltv.lifetime_value()' function.
-# # Subjects input dataframe.
-# df_subjects = event_log.loc[event_log.type == 'registration']
-# df_subjects = df_subjects.rename({'user_id': 'subject_id', 'date': 'registration_date'}, axis='columns')
-# df_subjects['lifetime'] = [(end_date - d).days for d in df_subjects.registration_date]
-#
-# # Event input dataframe.
-# df_events = event_log.loc[event_log.type == 'conversion']
-# df_events = df_events.rename({'user_id': 'subject_id'}, axis='columns')
-# df_events = pd.merge(df_events, df_subjects[['subject_id', 'registration_date']], how='left', on=['subject_id']).reset_index()
-# df_events['time'] = [(row.date - row.registration_date).days for index, row in df_events.iterrows()]
-#
-# # Create lifetime value dataframe.
-# df_result = ltv.lifetime_value(df_subjects, df_events, confidence_level=0.8)
-#
-# # Generate a graph using the 'matplotlib' library.
-# x = df_result.time
-# plt.plot(
-#     x, df_result.value, 'k',
-#     x, df_result.confidence_interval_left_bound, 'k--',
-#     x, df_result.confidence_interval_right_bound, 'k--',
-# )
-# plt.xlabel('time')
-# plt.ylabel('value')
-# plt.show()
+print(event_log)
 
-####
-dff = event_log.rename({'user_id': 'subject_id'}, axis='columns')
-x = ltv.from_event_log(dff)
-print(x)
+# Get dataframe of empirical lifetime value through time.
+event_log = event_log.rename({'user_id': 'subject_id'}, axis='columns')
+df_result = ltv.from_event_log(event_log, confidence_level=0.8)
+
+# Generate a graph using the 'matplotlib' library.
+x = df_result.time
+plt.plot(
+    x, df_result.value, 'k',
+    x, df_result.confidence_interval_left_bound, 'k--',
+    x, df_result.confidence_interval_right_bound, 'k--',
+)
+plt.xlabel('time')
+plt.ylabel('value')
+plt.show()
